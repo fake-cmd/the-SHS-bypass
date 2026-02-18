@@ -1,0 +1,11 @@
+{
+  "name": "vortex",
+  "description": "Local launcher app",
+  "repository": "https://example.com/vortex",
+  "env": {
+    "PORT": {
+      "description": "Web port",
+      "value": "3000"
+    }
+  }
+}
