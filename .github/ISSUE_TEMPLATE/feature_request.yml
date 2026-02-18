@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest a new feature or improvement
+labels: [enhancement]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Feature summary
+      placeholder: What do you want added?
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem this solves
+      placeholder: What pain point does this fix?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+.github/pull_request_template.md
+.github/pull_request_template.md
+New
++14
+-0
+
+## Summary
+- Describe what changed.
+
+## Why
+- Explain the motivation.
+
+## Testing
+- [ ] `node --check index.js`
+- [ ] `node --check config.js`
+- [ ] `node --check static/app.js`
+- [ ] Manual smoke test (`npm start` + open app)
+
+## Screenshots (if UI changes)
+- Add screenshots here.
