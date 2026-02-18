@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vortex</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Vortex</h1>
+    <p>Fresh rebuild with a clean local launcher.</p>
+  </header>
+
+  <nav>
+    <button data-tab="home" class="active">Home</button>
+    <button data-tab="games">Games</button>
+    <button data-tab="movies">Movies</button>
+    <button data-tab="settings">Settings</button>
+  </nav>
+
+  <main>
+    <section id="home" class="tab active">
+      <h2>Search</h2>
+      <form id="search-form">
+        <input id="q" placeholder="Search the web" required />
+        <select id="engine">
+          <option value="duckduckgo">DuckDuckGo</option>
+          <option value="google">Google</option>
+          <option value="bing">Bing</option>
+        </select>
+        <button type="submit">Go</button>
+      </form>
+    </section>
+
+    <section id="games" class="tab">
+      <h2>Games</h2>
+      <div class="grid" id="games-list"></div>
+    </section>
+
+    <section id="movies" class="tab">
+      <h2>Movies</h2>
+      <div class="grid" id="movies-list"></div>
+    </section>
+
+    <section id="settings" class="tab">
+      <h2>Settings</h2>
+      <label><input type="checkbox" id="ads-toggle" /> Enable ads</label>
+      <p id="ads-note">Ads are optional and disabling them will not break the app.</p>
+      <h3>Save Data Manager</h3>
+      <button id="export-data">Export data</button>
+      <input type="file" id="import-file" accept="application/json" />
+      <button id="import-data">Import data</button>
+      <pre id="status"></pre>
+    </section>
+  </main>
+
+  <footer>Made by Vortex</footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
