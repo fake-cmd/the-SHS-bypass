@@ -1,7 +1,8 @@
 param(
   [string]$RepoUrl = "https://github.com/fake-cmd/the-SHS-bypass.git",
   [string]$Branch = "main",
-  [string]$CloneDir = "$env:USERPROFILE\the-SHS-bypass"
+  [string]$CloneDir = "$env:USERPROFILE\the-SHS-bypass",
+  [string]$GitHubToken = $env:GITHUB_TOKEN
 )
 
 $ErrorActionPreference = "Stop"
@@ -49,6 +50,24 @@ function Get-GitCommand {
   return $gitExe
 }
 
+
+function Get-AuthenticatedRepoUrl {
+  param(
+    [string]$Url,
+    [string]$Token
+  )
+
+  if ([string]::IsNullOrWhiteSpace($Token)) {
+    return $Url
+  }
+
+  if ($Url -match '^https://github.com/(.+)$') {
+    return "https://x-access-token:$Token@github.com/$($Matches[1])"
+  }
+
+  return $Url
+}
+
 function Invoke-Git {
   param([string[]]$GitArgs)
 
@@ -59,6 +78,8 @@ function Invoke-Git {
 }
 
 $script:GitExe = Get-GitCommand
+$env:GIT_TERMINAL_PROMPT = "0"
+$PushRepoUrl = Get-AuthenticatedRepoUrl -Url $RepoUrl -Token $GitHubToken
 Write-Host "Using git: $script:GitExe" -ForegroundColor Cyan
 
 $inGitRepo = $false
@@ -98,9 +119,9 @@ try {
 }
 
 if ($originExists) {
-  Invoke-Git -GitArgs @("remote", "set-url", "origin", $RepoUrl)
+  Invoke-Git -GitArgs @("remote", "set-url", "origin", $PushRepoUrl)
 } else {
-  Invoke-Git -GitArgs @("remote", "add", "origin", $RepoUrl)
+  Invoke-Git -GitArgs @("remote", "add", "origin", $PushRepoUrl)
 }
 
 Invoke-Git -GitArgs @("fetch", "origin")
@@ -112,6 +133,13 @@ if ($changes) {
 }
 
 Write-Host "Pushing $Branch to $RepoUrl ..." -ForegroundColor Cyan
-Invoke-Git -GitArgs @("push", "-u", "origin", $Branch)
+try {
+  Invoke-Git -GitArgs @("push", "-u", "origin", $Branch)
+} catch {
+  if ($_.Exception.Message -match "exit code 128") {
+    throw "GitHub authentication failed. Set GITHUB_TOKEN (or -GitHubToken) to push without interactive sign-in."
+  }
+  throw
+}
 
 Write-Host "Done: https://github.com/fake-cmd/the-SHS-bypass/tree/main" -ForegroundColor Green
