@@ -50,11 +50,11 @@ function Get-GitCommand {
 }
 
 function Invoke-Git {
-  param([string[]]$Args)
+  param([string[]]$GitArgs)
 
-  & $script:GitExe @Args
+  & $script:GitExe @GitArgs
   if ($LASTEXITCODE -ne 0) {
-    throw "git $($Args -join ' ') failed with exit code $LASTEXITCODE"
+    throw "git $($GitArgs -join ' ') failed with exit code $LASTEXITCODE"
   }
 }
 
@@ -70,30 +70,48 @@ try {
 }
 
 if (-not $inGitRepo) {
-  Write-Host "Not inside a git repo. Cloning to $CloneDir ..." -ForegroundColor Yellow
+  Write-Host "Not inside a git repo. Preparing clone path: $CloneDir" -ForegroundColor Yellow
   if (!(Test-Path $CloneDir)) {
-    Invoke-Git @("clone", $RepoUrl, $CloneDir)
+    Invoke-Git -GitArgs @("clone", $RepoUrl, $CloneDir)
+    Set-Location $CloneDir
+  } else {
+    Set-Location $CloneDir
+    try {
+      & $script:GitExe rev-parse --is-inside-work-tree *> $null
+      if ($LASTEXITCODE -ne 0) {
+        throw "not-a-repo"
+      }
+    } catch {
+      throw "CloneDir exists but is not a git repository: $CloneDir"
+    }
   }
-  Set-Location $CloneDir
 } else {
   Write-Host "Detected existing git repository: $(Get-Location)" -ForegroundColor Cyan
 }
 
-Invoke-Git @("remote", "set-url", "origin", $RepoUrl)
-Invoke-Git @("checkout", "-B", $Branch)
+$originExists = $false
+try {
+  & $script:GitExe remote get-url origin *> $null
+  if ($LASTEXITCODE -eq 0) { $originExists = $true }
+} catch {
+  $originExists = $false
+}
+
+if ($originExists) {
+  Invoke-Git -GitArgs @("remote", "set-url", "origin", $RepoUrl)
+} else {
+  Invoke-Git -GitArgs @("remote", "add", "origin", $RepoUrl)
+}
+
+Invoke-Git -GitArgs @("fetch", "origin")
+Invoke-Git -GitArgs @("checkout", "-B", $Branch)
 
 $changes = & $script:GitExe status --porcelain
 if ($changes) {
-  Write-Host "Committing local changes before push ..." -ForegroundColor Yellow
-  Invoke-Git @("add", "-A")
-  try {
-    Invoke-Git @("commit", "-m", "chore: publish latest updates")
-  } catch {
-    Write-Host "No commit created (possibly no staged changes). Continuing ..." -ForegroundColor Yellow
-  }
+  throw "Working tree has uncommitted changes. Commit/stash first, then run again."
 }
 
 Write-Host "Pushing $Branch to $RepoUrl ..." -ForegroundColor Cyan
-Invoke-Git @("push", "-u", "origin", $Branch)
+Invoke-Git -GitArgs @("push", "-u", "origin", $Branch)
 
 Write-Host "Done: https://github.com/fake-cmd/the-SHS-bypass/tree/main" -ForegroundColor Green
