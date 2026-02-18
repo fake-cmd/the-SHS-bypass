@@ -9,7 +9,7 @@ A complete fresh rebuild of this repository as a local web portal.
 - Default search engine is DuckDuckGo
 - Settings page includes a save-data manager for export/import of localStorage + cookies
 - Ad toggle is safe and **does not break app behavior** when disabled
-- Footer credit: **Made by colt**
+- **Made by colt**
 
 ## Run locally
 
