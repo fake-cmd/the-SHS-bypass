@@ -1,0 +1,17 @@
+{
+  "name": "vortex",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Fresh local web portal with games, movies, search, and settings data manager.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test": "node --test",
+    "publish:main": "bash scripts/publish-to-github.sh",
+    "publish:main:ps": "powershell -ExecutionPolicy Bypass -File ./scripts/publish-main.ps1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
