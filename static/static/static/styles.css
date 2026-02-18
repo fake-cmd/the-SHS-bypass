@@ -1,0 +1,15 @@
+:root { color-scheme: dark; }
+body { font-family: Arial, sans-serif; margin: 0; background: #0f1324; color: #eef2ff; }
+header, footer { padding: 16px 20px; background: #121833; }
+nav { display: flex; gap: 8px; padding: 12px 20px; border-bottom: 1px solid #2a315d; }
+button { border: 1px solid #4a56aa; background: #1a2250; color: #eef2ff; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+button.active { background: #7f95ff; color: #0a1129; border-color: #7f95ff; }
+main { padding: 20px; }
+.tab { display: none; }
+.tab.active { display: block; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 10px; }
+.grid a { display: block; text-decoration: none; color: #eef2ff; background: #17204a; padding: 12px; border-radius: 8px; border: 1px solid #33408b; }
+.grid a:hover { border-color: #7f95ff; }
+form { display: flex; flex-wrap: wrap; gap: 8px; }
+input, select { padding: 8px; border-radius: 8px; border: 1px solid #33408b; background: #0f1638; color: #eef2ff; }
+pre { white-space: pre-wrap; background: #10183b; padding: 8px; border-radius: 8px; }
